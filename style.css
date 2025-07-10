@@ -1,39 +1,55 @@
+*{
+    margin:0;
+    padding:0;
+    /*outline: 1px solid red;*/
+
+}
+
+
 h1 {
     text-align: center;
     font-family: 'Arial', sans-serif;
     font-size: 3em;
-    color: #b7cbdd;
+    color:#c9b7dd;
     margin-top: 20px;
   }
 
-footer{
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    background-color: #f1f1f1;
-    position: fixed; 
+
+.element{
+    margin:5px;
+}
+
+#footer{
+    position:absolute;
+    text-align:center;
+    width:100%;
+    background-color:lavenderblush;
     
 }
+
 
 #container{
     position:relative;
     width: 480px;
-    height: 580px;
+    height: 570px;
     border: 1px solid #000;
+    max-width: 100vw;  
+    overflow: hidden;   
 }
 
-#route{
-    position: absolute;
-    width :150px;
-    height:150px;
-}
+.btn {
+    background: #ede5f4;
+    border-radius:1px;
+    border-color:#9c72c1;
+    font-size:14px;
+    margin:5px;
+  }
 
        
 img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
+    max-width: 100%;  
+       
     }
+    
 
