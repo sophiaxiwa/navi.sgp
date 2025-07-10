@@ -8,11 +8,10 @@ var programstop;
 function start(){
     nextstep = true
     programstop =false
-    i=0
+    vertice_num=0       
     startingpoint=document.getElementById("start").value
     destination=document.getElementById("ende").value
     document.getElementById("route").innerHTML = ""
-    document.getElementById("description").innerHTML = ""
     dijkstra()
 }
 
@@ -46,7 +45,7 @@ const graph={
 
 
 function dijkstra(){
-    //STEP1
+    //setup
     globalThis.vis={
         "1":0,
         "2":0,
@@ -127,41 +126,40 @@ function dijkstra(){
         "23":null,
         "21":null
     }
+    //step1
     dist[startingpoint] = 0
-    const neighbors1 =[]
-    for (key in graph[startingpoint]) {
-        neighbors1.push(key)
-    }
-    for(idx in neighbors1){
-        dist[neighbors1[idx]] = graph[startingpoint][neighbors1[idx]]
-    }
-    vis[startingpoint] = 1
+    //neighbors1 sind alle nachbarn
+    const neighbors1 =Object.keys(graph[startingpoint])
 
+    //startpunkt als besucht markieren und vorgaenger eintragen
+    vis[startingpoint] = 1
     for(idx in neighbors1){
         prev[neighbors1[idx]] = startingpoint
     }
 
-
-    const neighbors2 =[]
+    //step2-4
     var sum_visited=0
+    //solange noch nicht alle besucht wurden wdh
     while(sum_visited<Object.keys(vis).length){
         var smallest_dist = Infinity
         for(idx in dist){
+            //als nächstes wird unbesuchter knoten mit kleinster distanz angeschaut
             if(dist[idx]<smallest_dist && vis[idx]==0){
                 smallest_dist = dist[idx]
+                //neuer startpunkt
                 startingpoint=idx
             }
         }
 
-
-       
+        //alle unbesuchten nachbarn finden
+        const neighbors2 =[]
         for (key in graph[startingpoint]) {
             if(key!=startingpoint && vis[key]==0){
                 neighbors2.push(key)
             }
         }
+        //distanz update falls kleinere distanz gefunden
         for(idx in neighbors2){
-        
             newdist = dist[startingpoint] + graph[startingpoint][neighbors2[idx]]
             if(newdist<dist[neighbors2[idx]]){
                 dist[neighbors2[idx]] = newdist
@@ -172,17 +170,17 @@ function dijkstra(){
         neighbors2.length=0
         
         count= 0
-        for(idx in vis){
-            count =count+vis[idx]
+        for(key in vis){
+            count =count+vis[key]
         }
         sum_visited=count
     }
     find_path()
 }
 
+//step5 (rueckwaerts weg finden)
 function find_path(){
     globalThis.path=[]
-    
     var current=destination
     while(current!==null){
         path.push(current)
@@ -190,25 +188,53 @@ function find_path(){
     }
     path.reverse()
     console.log(path)
-    show_path()
+    preloadImages() 
+
+    
+}
+
+function preloadImages(){
+    for(let node=0; node<path.length;node++){
+        if(node===(path.length)-1){
+            img="img/"+String(path[node])+".jpg"
+            var link = document.createElement("link")
+            link.href = img
+            link.rel="preload"
+            link.as="image"
+            document.head.appendChild(link)
+            show_path()
+        }
+        else{
+            img="img/"+String(path[node])+"zu"+String(path[node+1])+".jpg"
+            var link = document.createElement("link")
+            link.href = img
+            link.rel="preload"
+            link.as="image"
+            document.head.appendChild(link)
+        }
+        
+    }
+    console.log(document.head)
+    
+        
 }
 
 
 function weiter(){
     nextstep = true
-    //document.getElementById("route").innerHTML = ""
-    if(programstop!=true){
+    if(programstop===false){
     show_path()
     }
 }
 
-var i = 0
+var vertice_num = 0
 function show_path(){
-    while(nextstep===true && i<path.length){
-        if(i===(path.length)-1){
-            node=path[i]
-            img = "<img src=img/"+String(node)+".jpg width = 30 height = 40></img>"
+    while(nextstep===true){
+        if(vertice_num===(path.length)-1){
+            node=path[vertice_num]
+            img = "<img src=img/"+String(node)+".jpg style='width:150px; height:150px;'></img>"
             document.getElementById("route").innerHTML +=img
+            document.getElementById("route").innerHTML += "<br>"
 
             description = "Du bist bei deinem Ziel " + String(node)+" angelangt"
             document.getElementById("route").innerHTML += description
@@ -217,20 +243,21 @@ function show_path(){
             
             nextstep=false
             programstop = true
-            
         } 
     
         else{
-            node=path[i]
-            next=path[i+1]
-            img = "<img src=img/"+String(node)+"zu"+String(next)+".jpg width = 10 height = 10></img>"
+            node=path[vertice_num]
+            next=path[vertice_num+1]
+            img = "<img src=img/"+String(node)+"zu"+String(next)+".jpg style='width:150px; height:150px;'></img>"
+
             document.getElementById("route").innerHTML +=img
+            document.getElementById("route").innerHTML += "<br>"
+
             description = "Gehe in Richtung von " + String(next)
             document.getElementById("route").innerHTML += description
             document.getElementById("route").innerHTML += "<br>"
-            document.getElementById("route").innerHTML += "<br>"
             nextstep=false
-            i++
+            vertice_num++
         }
     }
 }
